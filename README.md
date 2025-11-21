@@ -139,13 +139,13 @@ yarn format
 
 ```bash
 # Générer une migration
-npm run typeorm migration:generate --name NomDeLaMigration
+npm run typeorm -- migration:generate --name NomDeLaMigration
 
 # Exécuter les migrations
-npm run typeorm migration:run
+npm run typeorm -- migration:run
 
 # Annuler la dernière migration
-npm run typeorm migration:revert
+npm run typeorm -- migration:revert
 
 # Créer une entité
 nest generate class entities/nom-entite --no-spec
