@@ -139,7 +139,7 @@ yarn format
 
 ```bash
 # Générer une migration
-npm run typeorm migration:generate -- -n NomDeLaMigration
+npm run typeorm migration:generate --name NomDeLaMigration
 
 # Exécuter les migrations
 npm run typeorm migration:run
