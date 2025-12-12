@@ -1,0 +1,721 @@
+openapi: 3.1.1
+info:
+  title: Fisher Fans REST API
+  version: '3.0'
+  description: REST API for Fisher Fans - "The BlaBlaCar for sea fishing"
+servers:
+  - url: https://localhost:8443/api
+    description: Local development server (HTTPS)
+  - url: https://api.fisherfans.staging.com
+    description: Staging server
+  - url: https://api.fisherfans.com
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and token management
+  - name: Users
+    description: User management (individuals and professionals)
+  - name: Boats
+    description: Boat and equipment management
+  - name: Trips
+    description: Fishing trip management (creation, modification, search)
+  - name: Bookings
+    description: Booking management for fishing trips
+  - name: Fishing Logbook
+    description: Personal fishing logbook management
+
+paths:
+  /auth/v1/login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: Login successful - returns JWT token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthToken' }
+        '401':
+          description: Invalid email or password
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /v1/users:
+    get:
+      tags: [Users]
+      summary: Search users
+      operationId: searchUsers
+      parameters:
+        - { name: lastName, in: query, schema: { type: string } }
+        - { name: city, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string, enum: [individual, professional] } }
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+      responses:
+        '200':
+          description: Users list retrieved successfully
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/User' } }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags: [Users]
+      summary: Create new user
+      operationId: createUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/User' }
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /v1/users/{userId}:
+    parameters:
+      - { name: userId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Users]
+      summary: Get user details
+      operationId: getUser
+      responses:
+        '200':
+          description: User details retrieved successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      tags: [Users]
+      summary: Update user
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/User' }
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags: [Users]
+      summary: Delete user account (GDPR)
+      operationId: deleteUser
+      responses:
+        '204':
+          description: User deleted successfully and data anonymized
+        '403':
+          description: Forbidden - can only delete your own account or admin only
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/users/{userId}/boats:
+    get:
+      tags: [Users, Boats]
+      summary: Get user's boats
+      operationId: getUserBoats
+      parameters:
+        - { name: userId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: User boats retrieved successfully
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Boat' } }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/users/{userId}/trips:
+    get:
+      tags: [Users, Trips]
+      summary: Get user's trips
+      operationId: getUserTrips
+      parameters:
+        - { name: userId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: User trips retrieved successfully
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Trip' } }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/users/{userId}/bookings:
+    get:
+      tags: [Users, Bookings]
+      summary: Get user's bookings
+      operationId: getUserBookings
+      parameters:
+        - { name: userId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: User bookings retrieved successfully
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Booking' } }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/boats:
+    get:
+      tags: [Boats]
+      summary: Search boats
+      operationId: searchBoats
+      parameters:
+        - { name: boatType, in: query, schema: { type: string, enum: [open, cabin, catamaran, sailboat, jet_ski, canoe] } }
+        - { name: homePort, in: query, schema: { type: string } }
+        - { name: minCapacity, in: query, schema: { type: integer } }
+        - { name: minLat, in: query, description: Bounding box - minimum latitude, schema: { type: number, format: double, minimum: -90, maximum: 90 } }
+        - { name: maxLat, in: query, description: Bounding box - maximum latitude, schema: { type: number, format: double, minimum: -90, maximum: 90 } }
+        - { name: minLng, in: query, description: Bounding box - minimum longitude, schema: { type: number, format: double, minimum: -180, maximum: 180 } }
+        - { name: maxLng, in: query, description: Bounding box - maximum longitude, schema: { type: number, format: double, minimum: -180, maximum: 180 } }
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+      responses:
+        '200':
+          description: Boats list retrieved successfully
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Boat' } }
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags: [Boats]
+      summary: Create new boat
+      operationId: createBoat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Boat' }
+      responses:
+        '201':
+          description: Boat created successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Boat' }
+        '403':
+          description: Forbidden - User must have valid boat license (PERMIT_REQUIRED) to create boats
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BusinessError' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/boats/{boatId}:
+    parameters:
+      - { name: boatId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Boats]
+      summary: Get boat details
+      operationId: getBoat
+      responses:
+        '200':
+          description: Boat details retrieved successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Boat' }
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      tags: [Boats]
+      summary: Update boat
+      operationId: updateBoat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Boat' }
+      responses:
+        '200':
+          description: Boat updated successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Boat' }
+        '403':
+          description: Forbidden - can only edit your own boats
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags: [Boats]
+      summary: Delete boat
+      operationId: deleteBoat
+      responses:
+        '204':
+          description: Boat deleted successfully
+        '403':
+          description: Forbidden - can only delete your own boats
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/trips:
+    get:
+      tags: [Trips]
+      summary: Search fishing trips
+      operationId: searchTrips
+      parameters:
+        - { name: tripType, in: query, schema: { type: string, enum: [daily, recurring] } }
+        - { name: minPrice, in: query, schema: { type: number } }
+        - { name: maxPrice, in: query, schema: { type: number } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+      responses:
+        '200':
+          description: Trips list retrieved successfully
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Trip' } }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags: [Trips]
+      summary: Create new trip
+      operationId: createTrip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Trip' }
+      responses:
+        '201':
+          description: Trip created successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trip' }
+        '403':
+          description: Forbidden - User must own a boat (USER_HAS_NO_BOAT) to create trips
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BusinessError' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/trips/{tripId}:
+    parameters:
+      - { name: tripId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Trips]
+      summary: Get trip details
+      operationId: getTrip
+      responses:
+        '200':
+          description: Trip details retrieved successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trip' }
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      tags: [Trips]
+      summary: Update trip
+      operationId: updateTrip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Trip' }
+      responses:
+        '200':
+          description: Trip updated successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Trip' }
+        '403':
+          description: Forbidden - can only edit your own trips
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags: [Trips]
+      summary: Delete trip
+      operationId: deleteTrip
+      responses:
+        '204':
+          description: Trip deleted successfully
+        '403':
+          description: Forbidden - can only delete your own trips
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/bookings:
+    get:
+      tags: [Bookings]
+      summary: Search bookings
+      operationId: searchBookings
+      parameters:
+        - { name: tripId, in: query, schema: { type: string, format: uuid } }
+        - { name: userId, in: query, schema: { type: string, format: uuid } }
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+      responses:
+        '200':
+          description: Bookings list retrieved successfully
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Booking' } }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags: [Bookings]
+      summary: Create new booking
+      operationId: createBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Booking' }
+      responses:
+        '201':
+          description: Booking created successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Booking' }
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/bookings/{bookingId}:
+    parameters:
+      - { name: bookingId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Bookings]
+      summary: Get booking details
+      operationId: getBooking
+      responses:
+        '200':
+          description: Booking details retrieved successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Booking' }
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      tags: [Bookings]
+      summary: Update booking
+      operationId: updateBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Booking' }
+      responses:
+        '200':
+          description: Booking updated successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Booking' }
+        '403':
+          description: Forbidden - can only edit your own bookings
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags: [Bookings]
+      summary: Cancel booking
+      operationId: deleteBooking
+      responses:
+        '204':
+          description: Booking cancelled successfully
+        '403':
+          description: Forbidden - can only cancel your own bookings
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/logbook:
+    get:
+      tags: [Fishing Logbook]
+      summary: Get logbook entries
+      operationId: getLogbookEntries
+      parameters:
+        - { name: userId, in: query, required: true, schema: { type: string, format: uuid } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: fishSpecies, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer, default: 1 } }
+      responses:
+        '200':
+          description: Logbook entries retrieved successfully
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/LogbookEntry' } }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags: [Fishing Logbook]
+      summary: Create logbook entry
+      operationId: createLogbookEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LogbookEntry' }
+      responses:
+        '201':
+          description: Logbook entry created successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LogbookEntry' }
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /v1/logbook/{entryId}:
+    parameters:
+      - { name: entryId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      tags: [Fishing Logbook]
+      summary: Get logbook entry details
+      operationId: getLogbookEntry
+      responses:
+        '200':
+          description: Logbook entry details retrieved successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LogbookEntry' }
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      tags: [Fishing Logbook]
+      summary: Update logbook entry
+      operationId: updateLogbookEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LogbookEntry' }
+      responses:
+        '200':
+          description: Logbook entry updated successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LogbookEntry' }
+        '403':
+          description: Forbidden - can only edit your own logbook entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags: [Fishing Logbook]
+      summary: Delete logbook entry
+      operationId: deleteLogbookEntry
+      responses:
+        '204':
+          description: Logbook entry deleted successfully
+        '403':
+          description: Forbidden - can only delete your own logbook entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Bearer token for authentication
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - JWT token missing, invalid or expired
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+    ForbiddenError:
+      description: Forbidden - Insufficient permissions to perform this action
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+    NotFoundError:
+      description: Not found - Resource does not exist
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+    BadRequestError:
+      description: Bad request - Invalid filter parameters or malformed request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+    ValidationError:
+      description: Validation error - Required fields missing or invalid format
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string, example: "404" }
+        message: { type: string, example: "Resource not found" }
+        details: { type: string, example: "User with id ABC not found" }
+
+    BusinessError:
+      type: object
+      required: [code, businessCode, message]
+      properties:
+        code: { type: string, example: "403" }
+        businessCode: 
+          type: string
+          enum: [INVALID_FILTER, PERMIT_REQUIRED, USER_HAS_NO_BOAT, VALIDATION_FAILED, NOT_ALLOWED]
+          example: "PERMIT_REQUIRED"
+        message: { type: string, example: "Boat license is required to create a boat" }
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email, example: "user@example.com" }
+        password: { type: string, minLength: 8, example: "securePassword123" }
+
+    AuthToken:
+      type: object
+      properties:
+        accessToken: { type: string, example: "eyJhbGciOiJIUzI1NiIs..." }
+        refreshToken: { type: string, example: "eyJhbGciOiJIUzI1NiIs..." }
+        expiresIn: { type: integer, example: 3600, description: "Token expiration in seconds" }
+
+    User:
+      type: object
+      required: [lastName, firstName, email, city, status]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        lastName: { type: string, minLength: 1, example: "Dupont" }
+        firstName: { type: string, minLength: 1, example: "Jean" }
+        email: { type: string, format: email, example: "jean@example.com" }
+        password: { type: string, minLength: 8, writeOnly: true }
+        city: { type: string, example: "Nice" }
+        phone: { type: string, example: "+33612345678" }
+        photoUrl: { type: string, format: uri }
+        status: { type: string, enum: [individual, professional] }
+        boatLicenseNumber: { type: string, pattern: '^\d{8}$', example: "12345678" }
+        insuranceNumber: { type: string, pattern: '^[A-Z0-9]{12}$', example: "ABC123456789" }
+        companyName: { type: string }
+        activityType: { type: string, enum: [rental, fishing_guide] }
+        createdAt: { type: string, format: date-time, readOnly: true }
+        updatedAt: { type: string, format: date-time, readOnly: true }
+
+    Boat:
+      type: object
+      required: [name, boatType, maxCapacity, homePort]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        name: { type: string, minLength: 1, example: "Sea Explorer" }
+        boatType: { type: string, enum: [open, cabin, catamaran, sailboat, jet_ski, canoe] }
+        maxCapacity: { type: integer, minimum: 1, example: 8 }
+        homePort: { type: string, example: "Antibes" }
+        equipment:
+          type: array
+          items:
+            type: string
+            enum: [sounder, livewell, ladder, gps, rod_holder, vhf_radio]
+          example: [gps, sounder, vhf_radio]
+        createdAt: { type: string, format: date-time, readOnly: true }
+        updatedAt: { type: string, format: date-time, readOnly: true }
+
+    Trip:
+      type: object
+      required: [title, tripType, price, passengerCount, boatId]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        title: { type: string, minLength: 1, example: "Tuna Fishing Day" }
+        tripType: { type: string, enum: [daily, recurring] }
+        price: { type: number, minimum: 0, example: 120.50 }
+        passengerCount: { type: integer, minimum: 1, example: 6 }
+        boatId: { type: string, format: uuid }
+        organizerId: { type: string, format: uuid, readOnly: true }
+        createdAt: { type: string, format: date-time, readOnly: true }
+        updatedAt: { type: string, format: date-time, readOnly: true }
+
+    Booking:
+      type: object
+      required: [tripId, seats]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        tripId: { type: string, format: uuid }
+        userId: { type: string, format: uuid, readOnly: true }
+        seats: { type: integer, minimum: 1, example: 2 }
+        totalPrice: { type: number, readOnly: true, example: 240.00 }
+        createdAt: { type: string, format: date-time, readOnly: true }
+        updatedAt: { type: string, format: date-time, readOnly: true }
+
+    LogbookEntry:
+      type: object
+      required: [fishSpecies, fishingDate, released]
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        userId: { type: string, format: uuid, readOnly: true }
+        fishSpecies: { type: string, minLength: 1, example: "Sea Bass" }
+        weight: { type: number, minimum: 0, example: 2.5 }
+        length: { type: number, minimum: 0, example: 45 }
+        location: { type: string, example: "Off Antibes" }
+        fishingDate: { type: string, format: date, example: "2024-11-21" }
+        released: { type: boolean, example: false }
+        createdAt: { type: string, format: date-time, readOnly: true }
+        updatedAt: { type: string, format: date-time, readOnly: true }
+
+security:
+  - bearerAuth: []
