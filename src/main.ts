@@ -41,7 +41,7 @@ async function bootstrap() {
     .setVersion('3.0')
     .addBearerAuth() // Ajoute le support de l'authentification JWT dans Swagger UI
     .addServer(`http://localhost:${port}`, 'Local development server')
-    .build();ù
+    .build();
 
   // Création du document Swagger à partir de la configuration
   const document = SwaggerModule.createDocument(app, config);
