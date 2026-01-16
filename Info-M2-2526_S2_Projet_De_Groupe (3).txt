@@ -1,0 +1,452 @@
+Laurent PASTORELLI
+laurent@bluebeacon.fr
+
+Sommaire
+ Objectifs du projet de groupe
+ Modalités
+ Présentation du sujet
+
+ Cahier des charges
+ Annexes techniques
+➝ Rendu et soutenance le 6 février 2026
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+2
+
+Objectifs du « PDG »
+ Réaliser les Web Services d’une application mobile de
+
+type « voyages et info locales » :
+ en répondant aux besoins exprimés dans un CDC,
+ en partant entièrement « de zéro »,
+
+ de qualité suffisante pour être réellement déployée sur un
+
+serveur
+
+ Appréhender les principales étapes du développement
+
+d’une API réseau
+ Découvrir les « bonnes pratiques » relatives au
+développement des API réseau
+ Travailler en équipe
+ Respecter un cahier des charges et un délai de livraison
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+3
+
+Modalités
+ Durée de réalisation du projet : environ 5 mois
+ Début le 10 octobre 2025
+ Fin le 6 février 2026 (date butoir
+)
+ Notation sur 20 points, coefficient 3
+ Rendu des devoirs :
+4 pts
+ Remise des livrables :
+6 pts
+ Soutenance :
+5 pts
+ Recette client:
+5 pts
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+4
+
+Modalités
+ Livrables
+ Reposoir GitHub contenant le code source de l’API
+Un unique reposoir (sources, documentation, tests, ...)
+ Seul le dernier commit avant la date de fin du projet sera pris en
+compte
+
+
+ Spécification de l’API en OAS 3.1 (fichier .yaml ou .json)
+ Documentation de l’API
+ sous forme libre (Swagger, HTML, PDF, etc.)
+➝ dépendra des choix technologiques effectués
+ PDF du power point de la soutenance
+10 diapositives minimum
+ plan de la présentation attendue disponible sur Moodle
+
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+5
+
+Modalités
+ Soutenance
+ Date : le 6 février 2026
+ Durée : 30 mins par groupe
+ Déroulement chronologique :
+Présentation PPT :
+ Recette client de l’API :
+ Questions de l’auditoire :
+
+
+10 mins
+15 mins
+5 mins
+
+ Recette client
+ Démontrer que l’API satisfait l’ensemble des besoins
+du CDC
+⇒ « Jouer » les scénarios de test qui auront été élaborés
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+6
+
+Modalités
+ Suivi de l’avancement des projets de groupe
+ 8 sessions de 3 heures (l’après-midi) pour travailler
+ensemble sur le PDG (ne suffira probablement pas
+ En mode « Travaux Dirigés »
+
+)
+
+aide sur les tâches à accomplir
+ questions / réponses
+ point d’avancement groupe par groupe
+
+
+ Rendu des devoirs
+ 4 devoirs Moodle à rendre pour la séance suivante
+
+
+représentant 20% de la note finale
+
+ Droit à l’erreur (sur le contenu, pas sur la date de
+
+remise du devoir !)
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+7
+
+Formation des groupes
+ Nombre maximum possible : 6 groupes
+ Contrainte liée à l’organisation des soutenances
+ ⇒ Trinômes ou binôme selon effectif promotion
+ Une fois constitué les groupes ne pourrons plus être
+
+modifiés*
+ Distribution des rôles et répartition des tâches :
+ laissé à la libre appréciation de chaque groupe
+ il est conseillé de désigner un chef de projet
+
+ rechercher l’équilibre dans la répartition des tâches !
+(*) sauf en cas de force majeure
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+8
+
+Sujet du projet
+ A partir du CDC fourni par le client, développer les
+
+« Web Services » de l’application mobile*
+
+ NB: application entièrement fictive ne servant que
+
+de prétexte au développement d’une API réseau
+(*) toute ressemblance avec une application mobile existante ne serait que pure coïncidence !
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+9
+
+A propos de « Fisher Fans »
+ En bref : c’est le « blablacar » des pêcheurs en mer !
+ Utilisateurs de l’application :
+ Passionnés de pêche en mer ou sous-marine
+ Propriétaires de bateau (du kayak au yacht)
+ Professionnels de la location de bateaux
+ Principales fonctionnalités :
+ Partage de places sur un bateau pour des sorties
+pêche ou chasse sous-marine,
+ Location et réservation de bateau
+ Gestion d’un carnet de pêches
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+10
+
+Cahier des charges
+#
+
+Besoins fonctionnels
+
+BF 1 L’API FF sera privée (l’autorisation d’accès se fera par identification des
+utilisateurs)
+BF 2 L’API FF devra exposer les ressources suivantes (cf. annexes pour les
+informations détaillées):
+• Utilisateurs de l’application
+• Bateaux
+• Sorties pêche
+• Réservations
+• Carnets de pêche
+BF 3 L’API FF devra permettre de créer de nouveaux utilisateurs
+BF 4 L’API FF devra permettre de créer de nouveaux bateaux
+BF 5 L’API FF devra permettre de créer de nouvelles sorties pêche
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+11
+
+Cahier des charges
+#
+
+Besoins fonctionnels
+
+BF 6
+
+L’API FF devra permettre de créer de nouvelles réservations
+
+BF 7
+
+L’API FF devra permettre de créer de nouveaux carnets de pêche
+
+BF 8
+
+L’API FF devra permettre de supprimer un utilisateur
+
+BF 9
+
+L’API FF devra permettre de supprimer un bateau
+
+BF10 L’API FF devra permettre de supprimer une sortie pêche
+BF11 L’API FF devra permettre de supprimer une réservation
+BF12 L’API FF devra permettre de supprimer des pages du carnets de pêche
+BF13 L’API FF devra permettre de modifier un utilisateur
+BF14 L’API FF devra permettre de modifier un bateau
+BF15 L’API FF devra permettre de modifier une sortie pêche
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+12
+
+Cahier des charges
+#
+
+Besoins fonctionnels
+
+BF16 L’API FF devra permettre de modifier une page du carnet de pêche
+BF17 L’API FF devra permettre de modifier une réservation
+BF18 L’API FF devra permettre de modifier une page donnée du carnet de
+pêche d’un utilisateur donné
+BF19 L’API FF devra renvoyer pour un utilisateur donné :
+• La liste de tous ses bateaux
+• La liste de toutes ses sorties pêche
+• La liste de toutes ses réservations
+• La liste de toutes les pages de son carnet de pêche
+BF20 L’API FF devra renvoyer une liste d’utilisateurs en filtrant sur un sousensemble quelconque des caractéristiques d’un utilisateur
+BF21 L’API FF devra renvoyer une liste de bateau en filtrant sur un sousensemble quelconque des caractéristiques d’un bateau
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+13
+
+Cahier des charges
+#
+
+Besoins fonctionnels
+
+BF22 L’API FF devra renvoyer une liste de sorties en filtrant sur un sousensemble quelconque des caractéristiques d’une sortie
+BF23 L’API FF devra renvoyer une liste de réservations en filtrant sur un sousensemble quelconque des caractéristiques d’une réservation
+BF24 L’API FF devra renvoyer la liste des bateaux situés dans une zone
+géographique donnée par une « bounding box » latitude, longitude
+BF25 L’API FF devra renvoyer des codes d’erreurs métiers en cas de mauvaise
+utilisation de ses points de terminaison
+BF26 L’API FF devra interdire la création d’une sortie pêche aux utilisateurs
+ne possédant pas de bateau
+BF27 L’API FF devra interdire la création d’un nouveau bateau aux
+utilisateurs n’ayant pas indiqué de numéro de permis bateau dans leur
+profil utilisateur
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+14
+
+Cahier des charges
+#
+
+Besoins non fonctionnels
+
+BN1 L’API FF devra être versionnée
+BN2 L’API FF aura une adresse IP ou une URL locale (étant donné qu’elle ne
+sera pas déployée réellement sur un serveur distant)
+BN3 L’API FF devra utiliser une connexion sécurisée par le protocole HTTPS
+BN4 L’API FF renverra des réponses au format JSON (plus simple à traiter par
+les applications mobiles)
+BN5 L’API FF devra être décrite avec Open API Spécification v3.1
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+15
+
+Cahier des charges
+#
+
+Besoins non fonctionnels
+
+BN6 L’API FF devra respecter le RGPD en anonymisant les données
+personnelles des utilisateurs qui ont supprimé leur compte
+BN7 L’API FF devra assurer des temps de réponse optimaux pour garantir
+une expérience utilisateur fluide
+BN8 L’API FF devra gérer efficacement la montée en charge et les pics de
+trafic
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+16
+
+Annexe 1
+ Informations à conserver pour chaque utilisateur
+
+de l’application :
+ Nom, Prénom, Date de naissance
+ Email, Téléphone
+
+ Adresse, Code postal, Ville
+ Langues parlées
+ URL photo ou avatar
+ Numéro permis bateau (8 chiffres)
+ Numéro assurance (12 lettres et chiffres)
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+17
+
+Annexe 1
+ Informations à conserver pour chaque utilisateur de
+
+l’application (suite) :
+ Statut (particulier | professionnel)
+ Nom de la société (vide si particulier)
+ Type d’activité (location | guide de pêche)
+ Numéro SIRET
+ Numéro RC (registre de commerce)
+ La liste des bateaux de l’utilisateur
+ Le carnet de pêche de l’utilisateur
+ La liste des sorties de l’utilisateur
+ La liste des réservations de l’utilisateur
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+18
+
+Annexe 2
+ Informations à conserver pour chaque bateau:
+ Nom, Description,
+ Marque, Année de fabrication
+ URL de la photo du bateau
+ Type de permis requis (côtier | fluvial)
+ Type de bateau (open | cabine | catamaran | voilier | jetski | canoë)
+ Equipements (sondeur | vivier | échelle | GPS | portecannes | radio VHF)
+ Montant de la caution (en euros)
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+19
+
+Annexe 2
+ Informations à conserver pour chaque bateau
+
+(suite) :
+ Capacité maximum (en nombre de passagers)
+ Nombre de couchages
+
+ Port d’attache (nom de la ville)
+ Latitude, Longitude (Port d’attache)
+ Type de motorisation (diesel | essence | aucun)
+ Puissance du moteur (en chevaux)
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+20
+
+Annexe 3
+ Informations à conserver pour chaque sortie pêche
+ Titre de la sortie
+ Informations pratiques
+ Type de sortie (journalière | récurrente)
+ Type de tarif (global | par personne)
+ Liste des dates de début, et des dates de fin
+ Liste des heures de départ, et des heures de fin
+ Nombre de passagers
+ Prix de la sortie
+ L’utilisateur à l’origine de la sortie
+ Le bateau utilisé pour la sortie
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+21
+
+Annexe 4
+ Informations à conserver pour chaque réservation
+ la sortie correspondante
+ la date retenue
+ le nombre de places réservé
+ le prix total de la réservation
+ l’utilisateur à l’origine de la réservation
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+22
+
+Annexe 5
+ Informations à conserver pour chaque page du
+
+carnet de pêche :
+ Nom du poisson
+ URL de la photo du poisson
+ Commentaire
+
+ Taille (cm), Poids (Kg)
+ Lieu de pêche
+ Date de pêche
+ Poisson relâché ? (oui | non)
+
+ Propriétaire du carnet de pêche
+
+10/10/25
+
+Laurent Pastorelli - Formation Web Sercives
+
+23
+
+
