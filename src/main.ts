@@ -53,8 +53,9 @@ async function bootstrap() {
   // Démarrage du serveur sur le port configuré
   await app.listen(port);
 
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
+  console.log(`🚀 Application is running on: http://localhost:${port}/api`);
   console.log(`📚 Swagger documentation: http://localhost:${port}/api-docs`);
+  console.log(`❤️  Health check: http://localhost:${port}/api/health`);
 }
 
 // Démarrage de l'application

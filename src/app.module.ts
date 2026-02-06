@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppController } from './app.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { BoatsModule } from './modules/boats/boats.module';
@@ -52,5 +53,6 @@ import { LogbookModule } from './modules/logbook/logbook.module';
     BookingsModule, // Gestion des réservations
     LogbookModule,  // Gestion du carnet de pêche
   ],
+  controllers: [AppController], // Controller racine pour / et /health
 })
 export class AppModule {}

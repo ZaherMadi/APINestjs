@@ -10,9 +10,11 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+start.sh
 
 # OS
 .DS_Store
+nul
 
 # Tests
 /coverage
