@@ -75,6 +75,19 @@ export class User {
   })
   activityType: string;
 
+  // Nouveaux champs CDC Annexe 1
+  @Column({ type: 'date', nullable: true })
+  birthDate: Date;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true, length: 10 })
+  postalCode: string;
+
+  @Column('simple-array', { nullable: true })
+  languages: string[];
+
   @CreateDateColumn()
   createdAt: Date;
 

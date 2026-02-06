@@ -16,5 +16,28 @@ services:
       timeout: 5s
       retries: 10
 
+  # Interface graphique pour PostgreSQL (comme phpMyAdmin)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: fisherfans-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@fisherfans.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin-servers.json:/pgadmin4/servers.json:ro
+      - ./pgpass:/pgpass:ro
+    depends_on:
+      - db
+    entrypoint: >
+      /bin/sh -c "
+      cp /pgpass /var/lib/pgadmin/pgpass;
+      chmod 600 /var/lib/pgadmin/pgpass;
+      chown pgadmin:pgadmin /var/lib/pgadmin/pgpass;
+      /entrypoint.sh
+      "
+
 volumes:
   fisherfans_pgdata:

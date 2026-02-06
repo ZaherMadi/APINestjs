@@ -84,14 +84,24 @@ export class TripsService {
       query.andWhere('trip.price <= :maxPrice', { maxPrice: filters.maxPrice });
     }
 
-    return query.leftJoinAndSelect('trip.boat', 'boat').getMany();
+    // Inclure les infos de l'organisateur (sans données sensibles)
+    return query
+      .leftJoinAndSelect('trip.boat', 'boat')
+      .leftJoin('trip.organizer', 'organizer')
+      .addSelect(['organizer.id', 'organizer.firstName', 'organizer.lastName', 'organizer.languages', 'organizer.city', 'organizer.photoUrl'])
+      .getMany();
   }
 
   async findOne(id: string): Promise<Trip> {
-    const trip = await this.tripRepository.findOne({
-      where: { id },
-      relations: ['boat', 'organizer', 'bookings'],
-    });
+    // Utiliser QueryBuilder pour sélectionner uniquement les champs utilisateur non sensibles
+    const trip = await this.tripRepository
+      .createQueryBuilder('trip')
+      .leftJoinAndSelect('trip.boat', 'boat')
+      .leftJoin('trip.organizer', 'organizer')
+      .addSelect(['organizer.id', 'organizer.firstName', 'organizer.lastName', 'organizer.languages', 'organizer.city', 'organizer.photoUrl'])
+      .leftJoinAndSelect('trip.bookings', 'bookings')
+      .where('trip.id = :id', { id })
+      .getOne();
 
     if (!trip) {
       throw new NotFoundException(`Trip with ID ${id} not found`);

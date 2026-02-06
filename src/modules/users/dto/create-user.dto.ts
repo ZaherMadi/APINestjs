@@ -7,6 +7,8 @@ import {
   IsEnum,
   MinLength,
   Matches,
+  IsDateString,
+  IsArray,
 } from 'class-validator';
 
 /**
@@ -78,4 +80,26 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(['rental', 'fishing_guide'])
   activityType?: string;
+
+  // Nouveaux champs CDC Annexe 1
+  @ApiPropertyOptional({ example: '1990-05-15', description: 'Date de naissance (format YYYY-MM-DD)' })
+  @IsOptional()
+  @IsDateString()
+  birthDate?: string;
+
+  @ApiPropertyOptional({ example: '15 rue de la Mer' })
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @ApiPropertyOptional({ example: '06000', description: 'Code postal (5 chiffres)' })
+  @IsOptional()
+  @Matches(/^\d{5}$/, { message: 'Le code postal doit contenir 5 chiffres' })
+  postalCode?: string;
+
+  @ApiPropertyOptional({ example: ['Français', 'Anglais'], description: 'Langues parlées' })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  languages?: string[];
 }

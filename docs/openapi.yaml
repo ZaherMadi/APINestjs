@@ -1,0 +1,1220 @@
+openapi: 3.0.0
+paths:
+  /auth/v1/login:
+    post:
+      operationId: AuthController_login
+      summary: User login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDto"
+      responses:
+        200:
+          description: Login successful - returns JWT token
+        401:
+          description: Invalid email or password
+      tags:
+        - Authentication
+  /v1/users:
+    post:
+      operationId: UsersController_create
+      summary: Create new user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
+      responses:
+        201:
+          description: User created successfully
+        422:
+          description: Validation error
+      tags:
+        - Users
+      security:
+        -
+          bearer: []
+    get:
+      operationId: UsersController_findAll
+      summary: Search users
+      parameters:
+        -
+          name: lastName
+          required: false
+          in: query
+          schema:
+            type: string
+        -
+          name: city
+          required: false
+          in: query
+          schema:
+            type: string
+        -
+          name: status
+          required: false
+          in: query
+          schema:
+            enum:
+              - individual
+              - professional
+            type: string
+      responses:
+        200:
+          description: Users list retrieved successfully
+      tags:
+        - Users
+      security:
+        -
+          bearer: []
+  /v1/users/{userId}:
+    get:
+      operationId: UsersController_findOne
+      summary: Get user details
+      parameters:
+        -
+          name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: User details retrieved successfully
+        404:
+          description: User not found
+      tags:
+        - Users
+      security:
+        -
+          bearer: []
+    put:
+      operationId: UsersController_update
+      summary: Update user
+      parameters:
+        -
+          name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        200:
+          description: User updated successfully
+        403:
+          description: Forbidden - can only update your own profile
+      tags:
+        - Users
+      security:
+        -
+          bearer: []
+    delete:
+      operationId: UsersController_remove
+      summary: Delete user account (GDPR)
+      parameters:
+        -
+          name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        204:
+          description: User deleted and data anonymized
+        403:
+          description: Forbidden - can only delete your own account
+      tags:
+        - Users
+      security:
+        -
+          bearer: []
+  /v1/users/{userId}/boats:
+    get:
+      operationId: UsersController_getUserBoats
+      summary: Get user's boats
+      parameters:
+        -
+          name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: User boats retrieved successfully
+      tags:
+        - Users
+      security:
+        -
+          bearer: []
+  /v1/users/{userId}/trips:
+    get:
+      operationId: UsersController_getUserTrips
+      summary: Get user's trips
+      parameters:
+        -
+          name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: User trips retrieved successfully
+      tags:
+        - Users
+      security:
+        -
+          bearer: []
+  /v1/users/{userId}/bookings:
+    get:
+      operationId: UsersController_getUserBookings
+      summary: Get user's bookings
+      parameters:
+        -
+          name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: User bookings retrieved successfully
+      tags:
+        - Users
+      security:
+        -
+          bearer: []
+  /v1/boats:
+    post:
+      operationId: BoatsController_create
+      summary: Create new boat
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBoatDto"
+      responses:
+        201:
+          description: Boat created successfully
+        403:
+          description: User must have valid boat license
+      tags:
+        - Boats
+      security:
+        -
+          bearer: []
+    get:
+      operationId: BoatsController_findAll
+      summary: Search boats
+      parameters:
+        -
+          name: boatType
+          required: false
+          in: query
+          schema:
+            type: string
+        -
+          name: homePort
+          required: false
+          in: query
+          schema:
+            type: string
+        -
+          name: minCapacity
+          required: false
+          in: query
+          schema:
+            type: number
+        -
+          name: minLat
+          required: false
+          in: query
+          schema:
+            type: number
+        -
+          name: maxLat
+          required: false
+          in: query
+          schema:
+            type: number
+        -
+          name: minLng
+          required: false
+          in: query
+          schema:
+            type: number
+        -
+          name: maxLng
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        200:
+          description: Boats list retrieved successfully
+      tags:
+        - Boats
+      security:
+        -
+          bearer: []
+  /v1/boats/{boatId}:
+    get:
+      operationId: BoatsController_findOne
+      summary: Get boat details
+      parameters:
+        -
+          name: boatId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: Boat details retrieved successfully
+        404:
+          description: Boat not found
+      tags:
+        - Boats
+      security:
+        -
+          bearer: []
+    put:
+      operationId: BoatsController_update
+      summary: Update boat
+      parameters:
+        -
+          name: boatId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBoatDto"
+      responses:
+        200:
+          description: Boat updated successfully
+        403:
+          description: Can only edit your own boats
+      tags:
+        - Boats
+      security:
+        -
+          bearer: []
+    delete:
+      operationId: BoatsController_remove
+      summary: Delete boat
+      parameters:
+        -
+          name: boatId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        204:
+          description: Boat deleted successfully
+        403:
+          description: Can only delete your own boats
+      tags:
+        - Boats
+      security:
+        -
+          bearer: []
+  /v1/trips:
+    post:
+      operationId: TripsController_create
+      summary: Create new trip
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTripDto"
+      responses:
+        201:
+          description: Trip created successfully
+        403:
+          description: User must own a boat to create trips
+      tags:
+        - Trips
+      security:
+        -
+          bearer: []
+    get:
+      operationId: TripsController_findAll
+      summary: Search fishing trips
+      parameters:
+        -
+          name: tripType
+          required: false
+          in: query
+          schema:
+            type: string
+        -
+          name: minPrice
+          required: false
+          in: query
+          schema:
+            type: number
+        -
+          name: maxPrice
+          required: false
+          in: query
+          schema:
+            type: number
+        -
+          name: startDate
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Trips list retrieved successfully
+      tags:
+        - Trips
+      security:
+        -
+          bearer: []
+  /v1/trips/{tripId}:
+    get:
+      operationId: TripsController_findOne
+      summary: Get trip details
+      parameters:
+        -
+          name: tripId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: Trip details retrieved successfully
+        404:
+          description: Trip not found
+      tags:
+        - Trips
+      security:
+        -
+          bearer: []
+    put:
+      operationId: TripsController_update
+      summary: Update trip
+      parameters:
+        -
+          name: tripId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTripDto"
+      responses:
+        200:
+          description: Trip updated successfully
+        403:
+          description: Can only edit your own trips
+      tags:
+        - Trips
+      security:
+        -
+          bearer: []
+    delete:
+      operationId: TripsController_remove
+      summary: Delete trip
+      parameters:
+        -
+          name: tripId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        204:
+          description: Trip deleted successfully
+        403:
+          description: Can only delete your own trips
+      tags:
+        - Trips
+      security:
+        -
+          bearer: []
+  /v1/bookings:
+    post:
+      operationId: BookingsController_create
+      summary: Create new booking
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookingDto"
+      responses:
+        201:
+          description: Booking created successfully
+        422:
+          description: Validation error
+      tags:
+        - Bookings
+      security:
+        -
+          bearer: []
+    get:
+      operationId: BookingsController_findAll
+      summary: Search bookings
+      parameters:
+        -
+          name: tripId
+          required: false
+          in: query
+          schema:
+            type: string
+        -
+          name: userId
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Bookings list retrieved successfully
+      tags:
+        - Bookings
+      security:
+        -
+          bearer: []
+  /v1/bookings/{bookingId}:
+    get:
+      operationId: BookingsController_findOne
+      summary: Get booking details
+      parameters:
+        -
+          name: bookingId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: Booking details retrieved successfully
+        404:
+          description: Booking not found
+      tags:
+        - Bookings
+      security:
+        -
+          bearer: []
+    put:
+      operationId: BookingsController_update
+      summary: Update booking
+      parameters:
+        -
+          name: bookingId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBookingDto"
+      responses:
+        200:
+          description: Booking updated successfully
+        403:
+          description: Can only edit your own bookings
+      tags:
+        - Bookings
+      security:
+        -
+          bearer: []
+    delete:
+      operationId: BookingsController_remove
+      summary: Cancel booking
+      parameters:
+        -
+          name: bookingId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        204:
+          description: Booking cancelled successfully
+        403:
+          description: Can only cancel your own bookings
+      tags:
+        - Bookings
+      security:
+        -
+          bearer: []
+  /v1/logbook:
+    post:
+      operationId: LogbookController_create
+      summary: Create logbook entry
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLogbookEntryDto"
+      responses:
+        201:
+          description: Logbook entry created successfully
+        422:
+          description: Validation error
+      tags:
+        - Fishing Logbook
+      security:
+        -
+          bearer: []
+    get:
+      operationId: LogbookController_findAll
+      summary: Get logbook entries
+      parameters:
+        -
+          name: userId
+          required: true
+          in: query
+          schema:
+            type: string
+        -
+          name: startDate
+          required: false
+          in: query
+          schema:
+            type: string
+        -
+          name: fishSpecies
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Logbook entries retrieved successfully
+      tags:
+        - Fishing Logbook
+      security:
+        -
+          bearer: []
+  /v1/logbook/{entryId}:
+    get:
+      operationId: LogbookController_findOne
+      summary: Get logbook entry details
+      parameters:
+        -
+          name: entryId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: Logbook entry details retrieved successfully
+        404:
+          description: Logbook entry not found
+      tags:
+        - Fishing Logbook
+      security:
+        -
+          bearer: []
+    put:
+      operationId: LogbookController_update
+      summary: Update logbook entry
+      parameters:
+        -
+          name: entryId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLogbookEntryDto"
+      responses:
+        200:
+          description: Logbook entry updated successfully
+        403:
+          description: Can only edit your own logbook entries
+      tags:
+        - Fishing Logbook
+      security:
+        -
+          bearer: []
+    delete:
+      operationId: LogbookController_remove
+      summary: Delete logbook entry
+      parameters:
+        -
+          name: entryId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        204:
+          description: Logbook entry deleted successfully
+        403:
+          description: Can only delete your own logbook entries
+      tags:
+        - Fishing Logbook
+      security:
+        -
+          bearer: []
+info:
+  title: Fisher Fans REST API
+  description: REST API for Fisher Fans - The BlaBlaCar for sea fishing
+  version: 3.0
+  contact: {}
+tags: []
+servers:
+  -
+    url: "http://localhost:8443"
+    description: Local development server
+    variables: 
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User email address
+          example: jean.dupont@example.com
+        password:
+          type: string
+          description: User password (min 8 characters)
+          example: securePassword123
+          minLength: 8
+      required:
+        - email
+        - password
+    CreateUserDto:
+      type: object
+      properties:
+        lastName:
+          type: string
+          example: Dupont
+        firstName:
+          type: string
+          example: Jean
+        email:
+          type: string
+          example: jean.dupont@example.com
+        password:
+          type: string
+          example: securePassword123
+          minLength: 8
+        city:
+          type: string
+          example: Nice
+        phone:
+          type: string
+          example: +33612345678
+        photoUrl:
+          type: string
+          example: "https://example.com/photo.jpg"
+        status:
+          type: string
+          enum:
+            - individual
+            - professional
+          example: individual
+        boatLicenseNumber:
+          type: string
+          example: 12345678
+          pattern: ^\d{8}$
+        insuranceNumber:
+          type: string
+          example: ABC123456789
+          pattern: ^[A-Z0-9]{12}$
+        companyName:
+          type: string
+          example: Fisher Boats SARL
+        activityType:
+          type: string
+          enum:
+            - rental
+            - fishing_guide
+        birthDate:
+          type: string
+          example: 1990-05-15
+          description: Date de naissance (format YYYY-MM-DD)
+        address:
+          type: string
+          example: 15 rue de la Mer
+        postalCode:
+          type: string
+          example: 06000
+          description: Code postal (5 chiffres)
+        languages:
+          example:
+            - Français
+            - Anglais
+          description: Langues parlées
+          type: array
+          items:
+            type: string
+      required:
+        - lastName
+        - firstName
+        - email
+        - password
+        - city
+        - status
+    UpdateUserDto:
+      type: object
+      properties:
+        lastName:
+          type: string
+          example: Dupont
+        firstName:
+          type: string
+          example: Jean
+        email:
+          type: string
+          example: jean.dupont@example.com
+        password:
+          type: string
+          example: securePassword123
+          minLength: 8
+        city:
+          type: string
+          example: Nice
+        phone:
+          type: string
+          example: +33612345678
+        photoUrl:
+          type: string
+          example: "https://example.com/photo.jpg"
+        status:
+          type: string
+          enum:
+            - individual
+            - professional
+          example: individual
+        boatLicenseNumber:
+          type: string
+          example: 12345678
+          pattern: ^\d{8}$
+        insuranceNumber:
+          type: string
+          example: ABC123456789
+          pattern: ^[A-Z0-9]{12}$
+        companyName:
+          type: string
+          example: Fisher Boats SARL
+        activityType:
+          type: string
+          enum:
+            - rental
+            - fishing_guide
+        birthDate:
+          type: string
+          example: 1990-05-15
+          description: Date de naissance (format YYYY-MM-DD)
+        address:
+          type: string
+          example: 15 rue de la Mer
+        postalCode:
+          type: string
+          example: 06000
+          description: Code postal (5 chiffres)
+        languages:
+          example:
+            - Français
+            - Anglais
+          description: Langues parlées
+          type: array
+          items:
+            type: string
+    CreateBoatDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Sea Explorer
+        description:
+          type: string
+          example: Beautiful fishing boat
+        brand:
+          type: string
+          example: Beneteau
+        yearBuilt:
+          type: number
+          example: 2018
+        photoUrl:
+          type: string
+          example: "https://example.com/boat.jpg"
+        licenseType:
+          type: string
+          enum:
+            - coastal
+            - river
+        boatType:
+          type: string
+          enum:
+            - open
+            - cabin
+            - catamaran
+            - sailboat
+            - jet_ski
+            - canoe
+          example: cabin
+        equipment:
+          type: array
+          example:
+            - gps
+            - sounder
+          items:
+            type: string
+            enum:
+              - sounder
+              - livewell
+              - ladder
+              - gps
+              - rod_holder
+              - vhf_radio
+        deposit:
+          type: number
+          example: 1500
+        maxCapacity:
+          type: number
+          example: 8
+        bedCount:
+          type: number
+          example: 2
+        homePort:
+          type: string
+          example: Antibes
+        latitude:
+          type: number
+          example: 43.5804
+        longitude:
+          type: number
+          example: 7.1251
+        engineType:
+          type: string
+          enum:
+            - diesel
+            - gasoline
+            - none
+        enginePower:
+          type: number
+          example: 150
+      required:
+        - name
+        - boatType
+        - maxCapacity
+        - homePort
+    UpdateBoatDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Sea Explorer
+        description:
+          type: string
+          example: Beautiful fishing boat
+        brand:
+          type: string
+          example: Beneteau
+        yearBuilt:
+          type: number
+          example: 2018
+        photoUrl:
+          type: string
+          example: "https://example.com/boat.jpg"
+        licenseType:
+          type: string
+          enum:
+            - coastal
+            - river
+        boatType:
+          type: string
+          enum:
+            - open
+            - cabin
+            - catamaran
+            - sailboat
+            - jet_ski
+            - canoe
+          example: cabin
+        equipment:
+          type: array
+          example:
+            - gps
+            - sounder
+          items:
+            type: string
+            enum:
+              - sounder
+              - livewell
+              - ladder
+              - gps
+              - rod_holder
+              - vhf_radio
+        deposit:
+          type: number
+          example: 1500
+        maxCapacity:
+          type: number
+          example: 8
+        bedCount:
+          type: number
+          example: 2
+        homePort:
+          type: string
+          example: Antibes
+        latitude:
+          type: number
+          example: 43.5804
+        longitude:
+          type: number
+          example: 7.1251
+        engineType:
+          type: string
+          enum:
+            - diesel
+            - gasoline
+            - none
+        enginePower:
+          type: number
+          example: 150
+    CreateTripDto:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Tuna Fishing Day
+        practicalInfo:
+          type: string
+          example: Bring your own gear
+        tripType:
+          type: string
+          enum:
+            - daily
+            - recurring
+          example: daily
+        pricingType:
+          type: string
+          enum:
+            - total
+            - per_person
+          example: per_person
+        startDates:
+          example:
+            - 2024-06-15
+          type: array
+          items:
+            type: string
+        endDates:
+          example:
+            - 2024-06-15
+          type: array
+          items:
+            type: string
+        startTimes:
+          example:
+            - "08:00"
+          type: array
+          items:
+            type: string
+        endTimes:
+          example:
+            - "18:00"
+          type: array
+          items:
+            type: string
+        passengerCount:
+          type: number
+          example: 6
+        price:
+          type: number
+          example: 120.5
+        boatId:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+      required:
+        - title
+        - tripType
+        - pricingType
+        - passengerCount
+        - price
+        - boatId
+    UpdateTripDto:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Tuna Fishing Day
+        practicalInfo:
+          type: string
+          example: Bring your own gear
+        tripType:
+          type: string
+          enum:
+            - daily
+            - recurring
+          example: daily
+        pricingType:
+          type: string
+          enum:
+            - total
+            - per_person
+          example: per_person
+        startDates:
+          example:
+            - 2024-06-15
+          type: array
+          items:
+            type: string
+        endDates:
+          example:
+            - 2024-06-15
+          type: array
+          items:
+            type: string
+        startTimes:
+          example:
+            - "08:00"
+          type: array
+          items:
+            type: string
+        endTimes:
+          example:
+            - "18:00"
+          type: array
+          items:
+            type: string
+        passengerCount:
+          type: number
+          example: 6
+        price:
+          type: number
+          example: 120.5
+        boatId:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+    CreateBookingDto:
+      type: object
+      properties:
+        tripId:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        selectedDate:
+          type: string
+          example: 2024-06-15
+        seats:
+          type: number
+          example: 2
+      required:
+        - tripId
+        - selectedDate
+        - seats
+    UpdateBookingDto:
+      type: object
+      properties:
+        tripId:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        selectedDate:
+          type: string
+          example: 2024-06-15
+        seats:
+          type: number
+          example: 2
+    CreateLogbookEntryDto:
+      type: object
+      properties:
+        fishSpecies:
+          type: string
+          example: Sea Bass
+        photoUrl:
+          type: string
+          example: "https://example.com/fish.jpg"
+        comment:
+          type: string
+          example: Great catch!
+        length:
+          type: number
+          example: 45.5
+        weight:
+          type: number
+          example: 2.5
+        location:
+          type: string
+          example: Off Antibes
+        fishingDate:
+          type: string
+          example: 2024-06-15
+        released:
+          type: boolean
+          example: false
+      required:
+        - fishSpecies
+        - fishingDate
+        - released
+    UpdateLogbookEntryDto:
+      type: object
+      properties:
+        fishSpecies:
+          type: string
+          example: Sea Bass
+        photoUrl:
+          type: string
+          example: "https://example.com/fish.jpg"
+        comment:
+          type: string
+          example: Great catch!
+        length:
+          type: number
+          example: 45.5
+        weight:
+          type: number
+          example: 2.5
+        location:
+          type: string
+          example: Off Antibes
+        fishingDate:
+          type: string
+          example: 2024-06-15
+        released:
+          type: boolean
+          example: false

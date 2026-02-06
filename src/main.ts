@@ -55,7 +55,10 @@ async function bootstrap() {
 
   console.log(`🚀 Application is running on: http://localhost:${port}/api`);
   console.log(`📚 Swagger documentation: http://localhost:${port}/api-docs`);
+  console.log(`📄 OpenAPI JSON: ./docs/openapi.json`);
+  console.log(`📄 OpenAPI YAML: ./docs/openapi.yaml`);
   console.log(`❤️  Health check: http://localhost:${port}/api/health`);
+  console.log(`🐘 pgAdmin is running on: http://localhost:5050`);
 }
 
 // Démarrage de l'application
