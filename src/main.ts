@@ -58,7 +58,8 @@ async function bootstrap() {
   console.log(`📄 OpenAPI JSON: ./docs/openapi.json`);
   console.log(`📄 OpenAPI YAML: ./docs/openapi.yaml`);
   console.log(`❤️  Health check: http://localhost:${port}/api/health`);
-  console.log(`🐘 pgAdmin is running on: http://localhost:5050`);
+  console.log(`🐘 pgAdmin: http://localhost:5050`);
+  console.log(`🧪 Tests: cd tests && pytest -v | Report: pytest --html=report.html`);
 }
 
 // Démarrage de l'application

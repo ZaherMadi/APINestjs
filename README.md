@@ -81,10 +81,16 @@ npm run start:dev
 npm run build && npm run start:prod
 ```
 
-### Etape 3 : Acceder a l'API
+### Etape 3 : Acceder aux services
 
-- **API** : http://localhost:8443/api
-- **Swagger UI** : http://localhost:8443/api-docs
+| Service | URL | Identifiants |
+|---------|-----|--------------|
+| API | http://localhost:8443/api | - |
+| Swagger UI | http://localhost:8443/api-docs | - |
+| pgAdmin | http://localhost:5050 | admin@fisherfans.com / admin |
+| OpenAPI JSON | ./docs/openapi.json | - |
+| OpenAPI YAML | ./docs/openapi.yaml | - |
+| Tests Report | ./tests/report.html | Apres `pytest --html=report.html` |
 
 ## Scripts disponibles
 
@@ -96,7 +102,36 @@ npm run build && npm run start:prod
 | `npm run build` | Compile le projet |
 | `npm run lint` | Verifie le code avec ESLint |
 | `npm run format` | Formate le code avec Prettier |
-| `npm run test` | Execute les tests |
+| `npm run generate:oas` | Genere les fichiers OpenAPI (JSON/YAML) |
+
+## Tests (Pytest)
+
+Les tests d'integration verifient les Business Functions (BF1-BF27).
+
+```bash
+# Prerequis : installer les dependances Python
+cd tests
+pip install -r requirements.txt
+
+# Executer tous les tests (API doit etre lancee)
+pytest -v
+
+# Executer avec rapport HTML
+pytest -v --html=report.html
+
+# Executer un fichier specifique
+pytest test_bf1_authentication.py -v
+```
+
+### Fichiers de tests
+
+| Fichier | Description |
+|---------|-------------|
+| `test_bf1_authentication.py` | Tests d'authentification JWT |
+| `test_bf2_7_crud_resources.py` | Tests CRUD (Users, Boats, Trips, Bookings, Logbook) |
+| `test_bf9_bf14_bf21_boats.py` | Tests specifiques aux bateaux |
+| `test_bf24_geographic_filter.py` | Tests de filtrage geographique |
+| `test_bf25_26_27_business_rules.py` | Tests des regles metier |
 
 ## Structure du projet
 
